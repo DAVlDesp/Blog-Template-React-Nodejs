@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import  { createCategory, getCategories, getCategoryById, updateCategory, deleteCategory  } from '../controllers/category-controller.js'
+import  { createCategory, getCategories,getAllCategories, getCategoryById, updateCategory, deleteCategory  } from '../controllers/category-controller.js'
 
 const router = Router();
 
@@ -7,6 +7,8 @@ const router = Router();
 router.post('/category/create', createCategory);
 
 router.get('/category/data/name/:name', getCategories);
+
+router.get('/category/data/', getAllCategories);
 
 router.get('/category/data/id/:id', getCategoryById);
 

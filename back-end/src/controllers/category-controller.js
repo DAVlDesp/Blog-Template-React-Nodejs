@@ -13,10 +13,28 @@ export const createCategory = async (req, res) => {
 };
 
 // Obtener todas las categorías
-export const getCategories = async (req, res) => {
+export const getAllCategories = async (req, res) => {
   try {
     const categories = await Category.find();
     res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Obtener todas las categorías
+export const getCategories = async (req, res) => {
+  const { name } = req.params;
+
+  try {
+    // Buscar una categoría cuyo nombre coincida con el nombre proporcionado
+    const category = await Category.findOne({ name: name });
+    
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+    
+    res.status(200).json(category);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -1,0 +1,97 @@
+/* category.css */
+
+.container {
+  width: 90vw; /* El contenedor ocupa el 90% del ancho de la ventana del navegador */
+  margin: 0 auto; /* Centra el contenedor horizontalmente */
+}
+
+#filter-container {
+  display: flex;
+  align-items: center; /* Centra verticalmente los elementos */
+  margin-bottom: 20px;
+}
+
+input {
+  width: 25%; /* El input ocupa el 50% del ancho del contenedor */
+  text-align: center; /* Centra el texto horizontalmente dentro del input */
+  padding: 5px;
+  box-sizing: border-box; /* Incluye el padding en el ancho total del input */
+  border: solid 2px black;
+}
+
+#clearFilterButton {
+  margin-left: 5px;
+  width: 25px;
+  height: 25px;
+  border: none;
+  background-color: red;
+  cursor: pointer;
+  color: white;
+  text-align: center;
+  display: flex;
+  justify-content: center; /* Centra horizontalmente el contenido */
+  align-items: center; /* Centra verticalmente el contenido */
+}
+
+select {
+  margin-left: 2px;
+  margin-right: 40px;
+  padding: 3px;
+  border: solid 2px black;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+
+#Category-container {
+  width: 100%; /* El contenedor de categorías ocupa el 100% del ancho del contenedor */
+}
+
+.category-item {
+  display: flex; /* Utiliza flexbox para alinear los elementos en fila */
+  justify-content: space-between; /* Alinea los elementos en los extremos */
+  align-items: center; /* Centra verticalmente los elementos */
+  height: 50px;
+  max-width: 98.5%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 5px auto; /* Aplica un margen superior e inferior de 10px y 0px a los lados */
+  padding: 10px;
+  cursor: pointer; /* Cambia el cursor a una mano al pasar por encima para indicar que es clickable */
+}
+
+.category-item .titleAndDescription{
+  display: flex;
+  align-items: center;
+}
+
+.category-item .titleAndDescription h2{
+  display: flex;
+
+}
+
+.category-item .titleAndDescription p{
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 29px;
+}
+
+.category-item:hover {
+  background-color: lightgray; /* Cambia el color de fondo cuando el usuario pasa el ratón por encima */
+}
+
+.ranks-list {
+  display: flex; /* Utiliza flexbox para alinear los elementos en columna */
+  flex-direction: column; /* Alinea los elementos en una columna */
+  align-items: center; /* Centra verticalmente los elementos */
+  margin-left: auto; /* Empuja el listado de rangos hacia la derecha */
+  padding-left: 0; /* Quita el relleno izquierdo predeterminado de la lista */
+  list-style: none;
+}
+
+.ranks-list-item {
+  margin: 2px 0; /* Añade un pequeño margen inferior entre cada rango */
+  text-transform: uppercase; /* Convierte el texto a mayúsculas */
+}
