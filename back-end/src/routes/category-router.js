@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import  { createCategory, getCategories,getAllCategories, getCategoryById, updateCategory, deleteCategory  } from '../controllers/category-controller.js'
+import  { createCategory, getCategories,getAllCategories, getCategoryById, updateCategory, deleteCategory, deleteCategoryByUser } from '../controllers/category-controller.js'
 
 const router = Router();
 
@@ -15,5 +15,7 @@ router.get('/category/data/id/:id', getCategoryById);
 router.put('/category/update/id/:id', updateCategory);
 
 router.delete('/category/delete/:id',  deleteCategory);
+
+router.post('/category/deleteByUser',  deleteCategoryByUser);
 
 export default router;

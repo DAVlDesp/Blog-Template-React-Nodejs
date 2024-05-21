@@ -7,49 +7,47 @@
 
 #filter-container {
   display: flex;
-  align-items: center; /* Centra verticalmente los elementos */
+  align-items: center;
   margin-bottom: 20px;
 }
 
 input {
-  width: 25%; /* El input ocupa el 50% del ancho del contenedor */
   text-align: center; /* Centra el texto horizontalmente dentro del input */
+  width: 50%; /* Ajusta el ancho del input */
   padding: 5px;
   box-sizing: border-box; /* Incluye el padding en el ancho total del input */
+  height: 100%; /* Hace que el input ocupe toda la altura del contenedor */
   border: solid 2px black;
+  margin-right: 10px;
 }
 
 #clearFilterButton {
-  margin-left: 5px;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   border: none;
-  background-color: red;
-  cursor: pointer;
+  background-color: rgb(175, 0, 0);
+  cursor: pointer; 
   color: white;
   text-align: center;
-  display: flex;
-  justify-content: center; /* Centra horizontalmente el contenido */
-  align-items: center; /* Centra verticalmente el contenido */
+  align-items: center;
+  border-radius: 5px; 
 }
 
 select {
-  margin-left: 2px;
-  margin-right: 40px;
-  padding: 3px;
+  padding: 5px;
   border: solid 2px black;
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
+  margin-right: 10px;
 }
-
-
 
 #Category-container {
   width: 100%; /* El contenedor de categorías ocupa el 100% del ancho del contenedor */
 }
 
 .category-item {
+  overflow: hidden;
   display: flex; /* Utiliza flexbox para alinear los elementos en fila */
   justify-content: space-between; /* Alinea los elementos en los extremos */
   align-items: center; /* Centra verticalmente los elementos */
@@ -60,22 +58,21 @@ select {
   margin: 5px auto; /* Aplica un margen superior e inferior de 10px y 0px a los lados */
   padding: 10px;
   cursor: pointer; /* Cambia el cursor a una mano al pasar por encima para indicar que es clickable */
+  position: relative; /* Para posicionar el menú relativo al item */
 }
 
-.category-item .titleAndDescription{
+.category-item .titleAndDescription {
   display: flex;
   align-items: center;
 }
 
-.category-item .titleAndDescription h2{
+.category-item .titleAndDescription h2 {
   display: flex;
-
 }
 
-.category-item .titleAndDescription p{
+.category-item .titleAndDescription p {
   margin-left: 20px;
   margin-right: 20px;
-  margin-top: 29px;
 }
 
 .category-item:hover {
@@ -94,4 +91,91 @@ select {
 .ranks-list-item {
   margin: 2px 0; /* Añade un pequeño margen inferior entre cada rango */
   text-transform: uppercase; /* Convierte el texto a mayúsculas */
+}
+
+.options-button {
+  margin-left: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: 10px;
+  color: #555; /* Color de los tres puntos */
+}
+
+.options-menu {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  padding: 20px;
+}
+
+.options-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px 200px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.3s ease;
+  text-align: center;
+  background: #f0f0f0;
+
+  margin: 10px 0;
+}
+
+.options-menu button:hover {
+  background: #d6d6d6;
+}
+
+
+.options-menu .borrar {
+  margin-top: 30px;
+  display: block;
+  width: 100%;
+  padding: 10px 200px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.3s ease;
+  text-align: center;
+  text-align: center;
+  background-color: rgb(175, 0, 0);
+  color: white;
+}
+
+.options-menu .borrar:hover {
+  background-color: rgb(135, 0, 0);
+}
+
+.confirm-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.confirm-modal-content button{
+  margin: 20px;
+  padding: 10px 30px;
 }

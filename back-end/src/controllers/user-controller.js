@@ -190,14 +190,18 @@ export const updateUserByEmail = async (req, res) => {
 
 export const updateUserById = async (req, res) => {
   try {
-    const { userId } = req.params;
-
-    let user = await User.findOne({ _id: id  }).select('-password');
+    const { id } = req.params;
+    console.log(id);
+    let user = await User.findOne({ _id: id }).select('-password');
     if (!user) {
-      console.log("ERROR: No se encontró ningún usuario con el correo electrónico proporcionado");
-      return res.status(404).json({ message: `No user found with the provided ID. ID provided: ${userId}` });
+      console.log("ERROR: No se encontró ningún usuario con el ID proporcionado");
+      return res.status(404).json({ message: `No user found with the provided ID. ID provided: ${id}` });
     }
 
+    // Verificar si la contraseña está presente antes de hashearla
+    if (req.body.password) {
+      req.body.password = await bcrypt.hash(req.body.password, 10);
+    }
 
     // Elimina las claves vacías o nulas del cuerpo de la solicitud
     for (const key in req.body) {
@@ -206,13 +210,10 @@ export const updateUserById = async (req, res) => {
       }
     }
 
-    //Hasheo de la contraseña
-    req.body.password = await bcrypt.hash(req.body.password, 10);
-
     // Elimina las claves que no deben ser actualizadas
     delete req.body.email;
 
-    user = await User.findOneAndUpdate({ _id: userId }, { $set: req.body }, { new: true });
+    user = await User.findOneAndUpdate({ _id: id }, { $set: req.body }, { new: true });
 
     console.log("Usuario actualizado:", user);
     res.status(200).json({ message: "The user data has been updated successfully." });
@@ -221,6 +222,7 @@ export const updateUserById = async (req, res) => {
     res.status(500).json({ message: 'Error updating user data by ID.' });
   }
 };
+
 
 
 
