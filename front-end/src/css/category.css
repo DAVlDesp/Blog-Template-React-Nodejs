@@ -179,3 +179,11 @@ select {
   margin: 20px;
   padding: 10px 30px;
 }
+
+
+.drag-handle {
+  cursor: grab;
+  padding: 0 10px;
+  display: inline-block;
+  user-select: none;
+}
