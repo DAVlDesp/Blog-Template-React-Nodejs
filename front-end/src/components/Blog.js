@@ -115,12 +115,14 @@ const DraggableCategory = ({ category, index, moveCategory, handleCategoryClick,
   drag(drop(ref));
 
   return (
-    <div ref={ref} className="category-item" style={{ opacity: isDragging ? 0.5 : 1 }}>
+    <div ref={ref} className="category-item" style={{ opacity: isDragging ? 0.5 : 1, backgroundColor: category.backgroundColor }}>
       <div className='drag-handle'>⋮⋮</div>
       <div className='titleAndDescription' onClick={() => handleCategoryClick(category.name)}>
         <h2>{category.name}</h2>
         <p>{category.description}</p>
       </div>
+      
+      
       <ul className="ranks-list">
         {category.rolesAllowed && category.rolesAllowed.map((role, index) => (
           <li key={index} className="ranks-list-item">
@@ -166,12 +168,12 @@ const Blog = () => {
         const categoriesData = await getAllCategories();
         const savedOrder = JSON.parse(localStorage.getItem('categoryOrder'));
         if (savedOrder) {
-          const orderedCategories = categoriesData.sort((a, b) => {
-            const indexA = savedOrder.indexOf(a.name);
-            const indexB = savedOrder.indexOf(b.name);
-            return indexA === -1 && indexB === -1 ? 0 : indexA === -1 ? 1 : indexB === -1 ? -1 : indexA - indexB;
-          });
-          setCategories(orderedCategories);
+          const orderedCategories = savedOrder.map(name => categoriesData.find(cat => cat.name === name));
+          // Filter out categories that might have been deleted
+          const existingCategories = orderedCategories.filter(cat => cat);
+          // Add any new categories that are not in the saved order
+          const missingCategories = categoriesData.filter(cat => !savedOrder.includes(cat.name));
+          setCategories([...existingCategories, ...missingCategories]);
         } else {
           setCategories(categoriesData);
         }
@@ -179,39 +181,23 @@ const Blog = () => {
         console.error('Error fetching categories:', error);
       }
     };
-
+  
     fetchCategories();
   }, []);
+  
+  
+  
 
-  const moveCategory = (dragIndex, hoverIndex) => {
-    const draggedCategory = categories[dragIndex];
-    const newCategories = update(categories, {
-      $splice: [
-        [dragIndex, 1],
-        [hoverIndex, 0, draggedCategory],
-      ],
-    });
-    setCategories(newCategories);
-    const categoryOrder = newCategories.map(category => category.name);
-    localStorage.setItem('categoryOrder', JSON.stringify(categoryOrder));
-  };
-
-  const filteredCategories = categories.filter(category =>
-    category.name.toLowerCase().includes(filter.toLowerCase()) &&
-    ((!selectedRole && userRole === 'owner') || (category.rolesAllowed.includes('todos')) || (!selectedRole && category
-      .rolesAllowed.includes(userRole)) || (selectedRole && category.rolesAllowed.includes(selectedRole)))
-    );
-    
-      useEffect(() => {
-        const fetchUserRole = async () => {
-          const token = localStorage.getItem('token'); // Suponiendo que el token está almacenado en localStorage
-          try {
-            const userId = await getUserId(token);
-            const userResponse = await fetch(`http://localhost:8080/user/data/id/${userId}`);
-            if (!userResponse.ok) {
-              throw new Error(`HTTP error! Status: ${userResponse.status}`);
-            }
-            const userData = await userResponse.json();
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const token = localStorage.getItem('token'); // Suponiendo que el token está almacenado en localStorage
+      try {
+        const userId = await getUserId(token);
+        const userResponse = await fetch(`http://localhost:8080/user/data/id/${userId}`);
+        if (!userResponse.ok) {
+          throw new Error(`HTTP error! Status: ${userResponse.status}`);
+        }
+          const userData = await userResponse.json();
             setUserRole(userData.role);
           } catch (error) {
             console.error('Error fetching user role:', error);
@@ -220,6 +206,10 @@ const Blog = () => {
     
         fetchUserRole();
       }, []);
+
+
+
+      
     
       useEffect(() => {
         const handleClickOutside = (event) => {
@@ -234,6 +224,28 @@ const Blog = () => {
           document.removeEventListener('mousedown', handleClickOutside);
         };
       }, []);
+
+      
+      
+      
+      
+
+
+    
+      const moveCategory = (dragIndex, hoverIndex) => {
+        const draggedCategory = categories[dragIndex];
+        const newCategories = update(categories, {
+          $splice: [
+            [dragIndex, 1],
+            [hoverIndex, 0, draggedCategory],
+          ],
+        });
+        setCategories(newCategories);
+        const categoryOrder = newCategories.map(category => category.name);
+        localStorage.setItem('categoryOrder', JSON.stringify(categoryOrder));
+      };
+      
+      
     
       const handleCategoryClick = async (categoryName) => {
         try {
@@ -255,6 +267,8 @@ const Blog = () => {
       const handleMenuClick = (categoryName) => {
         setShowMenu(categoryName === showMenu ? null : categoryName);
       };
+    
+   
     
       const handleDeleteClick = (categoryName) => {
         setCategoryToDelete(categoryName);
@@ -279,11 +293,16 @@ const Blog = () => {
         setCategoryToDelete(null);
       };
     
+      const filteredCategories = categories.filter(category =>
+        category.name.toLowerCase().includes(filter.toLowerCase()) &&
+        ((!selectedRole && userRole === 'owner') || (category.rolesAllowed.includes('todos')) || (!selectedRole && category.rolesAllowed.includes(userRole)) || (selectedRole && category.rolesAllowed.includes(selectedRole)))
+      );
+    
       return (
         <DndProvider backend={HTML5Backend}>
           <div className="container">
             <Header />
-            <h1>BLOG</h1>
+            <h1>CATEGORÍAS</h1>
     
             <div id='filter-container'>
               <select value={selectedRole} onChange={handleRoleChange}>

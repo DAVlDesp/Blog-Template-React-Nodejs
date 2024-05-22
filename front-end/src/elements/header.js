@@ -80,7 +80,7 @@ const Header = () => {
           <div className="profile">
 
             <Link to="/" className={`nav-link ${window.location.pathname === '/' ? 'active' : ''}`}>INICIO</Link>
-            <Link to="/blog" className={`nav-link ${window.location.pathname === '/blog' ? 'active' : ''}`}>BLOG</Link>
+            <Link to="/categorias" className={`nav-link ${window.location.pathname === '/categorias' ? 'active' : ''}`}>CATEGORÍAS</Link>
 
             <div
               className="profile-image"
