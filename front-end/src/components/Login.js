@@ -52,7 +52,7 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.token); // Guarda el token en localStorage
-        navigate('/blog');
+        navigate('/');
       } else {
         setError('Credenciales inválidas. Por favor, inténtelo de nuevo.');
       }

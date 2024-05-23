@@ -53,6 +53,12 @@ const Header = () => {
     navigate('/');
   };
 
+  const token = localStorage.getItem('token');
+  if (!token) {
+    navigate('/login'); // Redirigir al usuario a la página de login si no hay token
+    return;
+  }
+
   const handleMenuToggle = () => {
     setShowMenu(!showMenu); // Cambiar el estado para mostrar u ocultar el menú
   };
@@ -65,8 +71,8 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logo">
-        <Link to="/" className="nav-link">
-          <img src="./resources/img/logo.png" alt="Logo" className="logo-image" />
+        <Link to="/categorias" className="nav-link">
+          <img src="../resources/img/logo.png" alt="Logo" className="logo-image" />
         </Link>
       </div>
       <nav className="nav">
@@ -93,7 +99,7 @@ const Header = () => {
               <div className="profile-menu">
 
                 <p className="label">Nombre</p>
-                <p>{`${user?.userName} ${user?.lastName}`}</p>
+                <p>{`${user?.name} ${user?.surname}`}</p>
                 <br />
 
                 <p className="label">Correo electrónico</p>

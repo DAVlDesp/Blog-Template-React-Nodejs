@@ -200,3 +200,11 @@ select {
   height: 30px;
   padding: 0;
 }
+
+.arrastrarInfo{
+  color: rgb(94, 94, 94);
+  font-size: 15px;
+  margin-left: 5px;
+  margin-top: 10px;
+  margin-bottom: -2px;
+}

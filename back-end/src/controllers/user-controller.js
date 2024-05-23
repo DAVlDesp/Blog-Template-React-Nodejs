@@ -6,7 +6,7 @@ import config from '../config.js';
 
 
 export const register = async (req, res) => {
-  const { name, surname, password, email } = req.body;
+  const { name, surname, password, email, profileImage } = req.body;
   const emailVerificate = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/;
   let verification = true;
 
@@ -23,6 +23,10 @@ export const register = async (req, res) => {
     if (!emailVerificate.test(email) || !email) {
       verification = false;
       return res.status(400).json({ message: 'Email format is invalid' });
+    }
+
+    if(!profileImage){
+      profileImage = "../resources/img/userImg.png";
     }
 
     // auth verificate UserName
@@ -52,8 +56,8 @@ export const register = async (req, res) => {
         surname,
         email,
         password: hashedPassword,
-        profileImage: "./resources/img/userImg.png",
-        role: "user"
+        profileImage,
+        role: "cliente"
       });
 
       await
@@ -147,6 +151,46 @@ export const getUserByEmail = async (req, res) => {
     res.status(500).json({ message: 'Error fetching user data by email' });
   }
 };
+
+// Controlador para obtener todos los usuarios
+export const getAllUsers = async (req, res) => {
+  try {
+    // Buscar todos los usuarios, excluyendo la contraseña
+    const users = await User.find({}, { password: 0 });
+
+    if (!users || users.length === 0) {
+      console.log("ERROR: No se encontró ningún usuario");
+      return res.status(404).json({ message: 'No se encontraron usuarios' });
+    }
+
+    console.log("Datos de los usuarios encontrados:", users);
+    res.status(200).json(users);
+  } catch (error) {
+    console.log('ERROR: Error al obtener los datos de los usuarios', error);
+    res.status(500).json({ message: 'Error fetching users data' });
+  }
+};
+
+
+// Controlador para obtener todos los usuarios que no tienen el rol de "cliente"
+export const getAllNonClientUsers = async (req, res) => {
+  try {
+    // Buscar todos los usuarios que no tienen el rol de "cliente", excluyendo la contraseña
+    const users = await User.find({ role: { $ne: 'cliente' } }, { password: 0 });
+
+    if (!users || users.length === 0) {
+      console.log("ERROR: No se encontró ningún usuario que no sea cliente");
+      return res.status(404).json({ message: 'No se encontraron usuarios que no sean clientes' });
+    }
+
+    console.log("Datos de los usuarios encontrados:", users);
+    res.status(200).json(users);
+  } catch (error) {
+    console.log('ERROR: Error al obtener los datos de los usuarios que no son clientes', error);
+    res.status(500).json({ message: 'Error fetching non-client users data' });
+  }
+};
+
 
 
 

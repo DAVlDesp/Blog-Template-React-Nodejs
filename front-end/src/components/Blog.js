@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
+import { useNavigate } from 'react-router-dom';
 import Header from '../elements/header.js';
 import '../css/category.css'; // Importar el archivo CSS
 
@@ -13,20 +14,6 @@ async function getAllCategories() {
     }
     const categories = await response.json();
     return categories;
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-    throw error;
-  }
-}
-
-async function getCategories(categoryName = "nombre de la categoria") {
-  try {
-    const response = await fetch(`http://localhost:8080/category/data/name/${categoryName}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const category = await response.json();
-    return category;
   } catch (error) {
     console.error('Error fetching categories:', error);
     throw error;
@@ -121,8 +108,7 @@ const DraggableCategory = ({ category, index, moveCategory, handleCategoryClick,
         <h2>{category.name}</h2>
         <p>{category.description}</p>
       </div>
-      
-      
+
       <ul className="ranks-list">
         {category.rolesAllowed && category.rolesAllowed.map((role, index) => (
           <li key={index} className="ranks-list-item">
@@ -130,22 +116,29 @@ const DraggableCategory = ({ category, index, moveCategory, handleCategoryClick,
           </li>
         ))}
       </ul>
-      <button className="options-button" onClick={() => handleMenuClick(category.name)}>⋮</button>
+      
+      {/* BOTON PARA DICION */}
+  {/*
+       <button className="options-button" onClick={() => handleMenuClick(category.name)}>⋮</button> 
+  */}
       {showMenu === category.name && (
         <div className="options-menu" ref={menuRef}>
           <center><h2>{category.name}</h2></center>
 
-          {(userRole === 'owner' || userRole === 'empleado') && (
+          {(userRole === 'ceo' || userRole === 'empleado') && (
             <button>📖 Editar</button>
           )}
-
-          {(userRole === 'owner' || userRole === 'empleado') && (
+  
+          {(userRole === 'ceo' || userRole === 'empleado') && (
             <button >📌 Fijar</button>
           )}
 
-          {userRole === 'owner' && (
+  {/*      
+          {userRole === 'ceo' && (
             <button className='borrar' onClick={() => handleDeleteClick(category.name)}>❌ Borrar</button>
           )}
+  */}
+
         </div>
       )}
     </div>
@@ -161,6 +154,7 @@ const Blog = () => {
   const [showMenu, setShowMenu] = useState(null);
   const [userRole, setUserRole] = useState('');
   const menuRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -181,12 +175,9 @@ const Blog = () => {
         console.error('Error fetching categories:', error);
       }
     };
-  
+
     fetchCategories();
   }, []);
-  
-  
-  
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -197,158 +188,147 @@ const Blog = () => {
         if (!userResponse.ok) {
           throw new Error(`HTTP error! Status: ${userResponse.status}`);
         }
-          const userData = await userResponse.json();
-            setUserRole(userData.role);
-          } catch (error) {
-            console.error('Error fetching user role:', error);
-          }
-        };
-    
-        fetchUserRole();
-      }, []);
-
-
-
-      
-    
-      useEffect(() => {
-        const handleClickOutside = (event) => {
-          if (menuRef.current && !menuRef.current.contains(event.target)) {
-            setShowMenu(null);
-          }
-        };
-    
-        document.addEventListener('mousedown', handleClickOutside);
-    
-        return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
-        };
-      }, []);
-
-      
-      
-      
-      
-
-
-    
-      const moveCategory = (dragIndex, hoverIndex) => {
-        const draggedCategory = categories[dragIndex];
-        const newCategories = update(categories, {
-          $splice: [
-            [dragIndex, 1],
-            [hoverIndex, 0, draggedCategory],
-          ],
-        });
-        setCategories(newCategories);
-        const categoryOrder = newCategories.map(category => category.name);
-        localStorage.setItem('categoryOrder', JSON.stringify(categoryOrder));
-      };
-      
-      
-    
-      const handleCategoryClick = async (categoryName) => {
-        try {
-          const categoryInfo = await getCategories(categoryName);
-          console.log('Category Info:', categoryInfo);
-        } catch (error) {
-          console.error('Error fetching category info:', error);
-        }
-      };
-    
-      const handleClearFilter = () => {
-        setFilter('');
-      };
-    
-      const handleRoleChange = (e) => {
-        setSelectedRole(e.target.value);
-      };
-    
-      const handleMenuClick = (categoryName) => {
-        setShowMenu(categoryName === showMenu ? null : categoryName);
-      };
-    
-   
-    
-      const handleDeleteClick = (categoryName) => {
-        setCategoryToDelete(categoryName);
-        setShowConfirm(true);
-        setShowMenu(null);
-      };
-    
-      const handleConfirmDelete = async () => {
-        const token = localStorage.getItem('token');
-        try {
-          await deleteCategory(categoryToDelete, token);
-          setCategories(categories.filter(category => category.name !== categoryToDelete));
-          setShowConfirm(false);
-          setCategoryToDelete(null);
-        } catch (error) {
-          console.error('Error deleting category:', error);
-        }
-      };
-    
-      const handleCancelDelete = () => {
-        setShowConfirm(false);
-        setCategoryToDelete(null);
-      };
-    
-      const filteredCategories = categories.filter(category =>
-        category.name.toLowerCase().includes(filter.toLowerCase()) &&
-        ((!selectedRole && userRole === 'owner') || (category.rolesAllowed.includes('todos')) || (!selectedRole && category.rolesAllowed.includes(userRole)) || (selectedRole && category.rolesAllowed.includes(selectedRole)))
-      );
-    
-      return (
-        <DndProvider backend={HTML5Backend}>
-          <div className="container">
-            <Header />
-            <h1>CATEGORÍAS</h1>
-    
-            <div id='filter-container'>
-              <select value={selectedRole} onChange={handleRoleChange}>
-                <option value="">Roles</option>
-                <option value="todos">Todos</option>
-                <option value="empleado">Empleado</option>
-              </select>
-              <input
-                type="text"
-                placeholder="Filtrar categoría"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              />
-              <button id="clearFilterButton" onClick={handleClearFilter}>X</button>
-            </div>
-    
-            <div id="Category-container">
-              {filteredCategories.map((category, index) => (
-                <DraggableCategory
-                  key={category.id}
-                  index={index}
-                  category={category}
-                  moveCategory={moveCategory}
-                  handleCategoryClick={handleCategoryClick}
-                  handleMenuClick={handleMenuClick}
-                  showMenu={showMenu}
-                  menuRef={menuRef}
-                  handleDeleteClick={handleDeleteClick}
-                  userRole={userRole}
-                />
-              ))}
-            </div>
-    
-            {showConfirm && (
-              <div className="confirm-modal">
-                <div className="confirm-modal-content">
-                  <p>¿Quieres borrar la categoría <b>{categoryToDelete}</b>?</p>
-                  <button onClick={handleConfirmDelete} style={{ backgroundColor: '#b2ffb2' }}>Sí</button>
-                  <button onClick={handleCancelDelete} style={{ backgroundColor: '#ff8b8b' }}>No</button>
-                </div>
-              </div>
-            )}
-          </div>
-        </DndProvider>
-      );
+        const userData = await userResponse.json();
+        setUserRole(userData.role);
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
     };
-    
-    export default Blog;
-    
+
+    fetchUserRole();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const moveCategory = (dragIndex, hoverIndex) => {
+    const draggedCategory = categories[dragIndex];
+    const newCategories = update(categories, {
+      $splice: [
+        [dragIndex, 1],
+        [hoverIndex, 0, draggedCategory],
+      ],
+    });
+    setCategories(newCategories);
+    const categoryOrder = newCategories.map(category => category.name);
+    localStorage.setItem('categoryOrder', JSON.stringify(categoryOrder));
+  };
+
+  const handleCategoryClick = (categoryName) => {
+    const formattedName = categoryName
+      .replace(/[^a-zA-Z0-9 ]/g, '')  // Eliminar iconos y caracteres especiales
+      .trim()
+      .replace(/\s+/g, '-')
+      .toLowerCase();
+
+    navigate(`/categorias/${formattedName}`);
+  };
+
+  const handleClearFilter = () => {
+    setFilter('');
+  };
+
+  const handleRoleChange = (e) => {
+    setSelectedRole(e.target.value);
+  };
+
+  const handleMenuClick = (categoryName) => {
+    setShowMenu(categoryName === showMenu ? null : categoryName);
+  };
+
+  const handleDeleteClick = (categoryName) => {
+    setCategoryToDelete(categoryName);
+    setShowConfirm(true);
+    setShowMenu(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      await deleteCategory(categoryToDelete, token);
+      setCategories(categories.filter(category => category.name !== categoryToDelete));
+      setShowConfirm(false);
+      setCategoryToDelete(null);
+    } catch (error) {
+      console.error('Error deleting category:', error);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirm(false);
+    setCategoryToDelete(null);
+  };
+
+  const filteredCategories = categories.filter(category =>
+    category.name.toLowerCase().includes(filter.toLowerCase()) &&
+    ((!selectedRole && userRole === 'ceo') || (category.rolesAllowed.includes('todos')) || (!selectedRole && category.rolesAllowed.includes(userRole)) || (selectedRole && category.rolesAllowed.includes(selectedRole)))
+  );
+
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <div className="container">
+        <Header />
+        <h1>CATEGORÍAS</h1>
+
+        <div id='filter-container'>
+          <select value={selectedRole} onChange={handleRoleChange}>
+            <option value="">Roles</option>
+            <option value="todos">Todos</option>
+            <option value="empleado">Empleado</option>
+          </select>
+          <input
+            type="text"
+            placeholder="Filtrar categoría"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
+          <button id="clearFilterButton" onClick={handleClearFilter}>X</button>
+        </div>
+
+        <div className='arrastrarInfo'>
+          Puedes arrastrar las categorías para ordénalas como más te guste usando ⋮⋮
+        </div>
+
+        <div id="Category-container">
+          {filteredCategories.map((category, index) => (
+            <DraggableCategory
+              key={category.id}
+              index={index}
+              category={category}
+              moveCategory={moveCategory}
+              handleCategoryClick={handleCategoryClick}
+              handleMenuClick={handleMenuClick}
+              showMenu={showMenu}
+              menuRef={menuRef}
+              handleDeleteClick={handleDeleteClick}
+              userRole={userRole}
+            />
+          ))}
+        </div>
+
+        {showConfirm && (
+          <div className="confirm-modal">
+            <div className="confirm-modal-content">
+              <p>¿Quieres borrar la categoría <b>{categoryToDelete}</b>?</p>
+              <button onClick={handleConfirmDelete} style={{ backgroundColor: '#b2ffb2' }}>Sí</button>
+              <button onClick={handleCancelDelete} style={{ backgroundColor: '#ff8b8b' }}>No</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </DndProvider>
+  );
+};
+
+export default Blog;
