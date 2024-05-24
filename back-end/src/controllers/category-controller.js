@@ -110,7 +110,7 @@ export const deleteCategoryByUser = async (req, res) => {
           return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        if (user.role !== 'owner') {
+        if (user.role !== 'ceo') {
           return res.status(403).json({ message: 'No tienes permiso para eliminar esta categoría' });
         }
 

@@ -1,13 +1,14 @@
 import Post from '../models/post-model.js';
 
-// Crear una nueva publicación
+// controllers/post-controller.js
+
 export const createPost = async (req, res) => {
   try {
     const { title, content, category, author } = req.body;
     const newPost = new Post({
       title,
       content,
-      author: author,  //req.user._id, // Asumiendo que el usuario está autenticado y su ID está disponible en req.user
+      author: author,
       category
     });
     await newPost.save();
@@ -73,3 +74,5 @@ export const deletePost = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+

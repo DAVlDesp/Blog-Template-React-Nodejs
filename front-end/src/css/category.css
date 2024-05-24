@@ -194,6 +194,15 @@ select {
   user-select: none;
 }
 
+.drag-handle-fixed {
+  cursor: no-drop;
+  padding: 0 10px;
+  display: inline-block;
+  user-select: none;
+  scale: 0.7;
+  rotate: -45deg;
+}
+
 .colorPicker{
   margin-left: 20px;
   width: 50px;

@@ -116,9 +116,9 @@ const DraggableCategory = ({ category, index, moveCategory, handleCategoryClick,
           </li>
         ))}
       </ul>
-      
+
       {/* BOTON PARA DICION */}
-  {/*
+      {/*
        <button className="options-button" onClick={() => handleMenuClick(category.name)}>⋮</button> 
   */}
       {showMenu === category.name && (
@@ -128,12 +128,12 @@ const DraggableCategory = ({ category, index, moveCategory, handleCategoryClick,
           {(userRole === 'ceo' || userRole === 'empleado') && (
             <button>📖 Editar</button>
           )}
-  
+
           {(userRole === 'ceo' || userRole === 'empleado') && (
             <button >📌 Fijar</button>
           )}
 
-  {/*      
+          {/*      
           {userRole === 'ceo' && (
             <button className='borrar' onClick={() => handleDeleteClick(category.name)}>❌ Borrar</button>
           )}
@@ -145,7 +145,7 @@ const DraggableCategory = ({ category, index, moveCategory, handleCategoryClick,
   );
 };
 
-const Blog = () => {
+const Category = () => {
   const [categories, setCategories] = useState([]);
   const [filter, setFilter] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
@@ -275,6 +275,21 @@ const Blog = () => {
     ((!selectedRole && userRole === 'ceo') || (category.rolesAllowed.includes('todos')) || (!selectedRole && category.rolesAllowed.includes(userRole)) || (selectedRole && category.rolesAllowed.includes(selectedRole)))
   );
 
+
+  const handleCategoryCodeClick = (categoryName) => {
+    const formattedName = categoryName
+      .replace(/[^a-zA-Z0-9 ]/g, '')  // Eliminar iconos y caracteres especiales
+      .trim()
+      .replace(/\s+/g, '-')
+      .toLowerCase();
+    navigate(`/categorias/${formattedName}`);
+  };
+
+
+
+
+
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="container">
@@ -301,6 +316,7 @@ const Blog = () => {
         </div>
 
         <div id="Category-container">
+
           {filteredCategories.map((category, index) => (
             <DraggableCategory
               key={category.id}
@@ -315,6 +331,47 @@ const Blog = () => {
               userRole={userRole}
             />
           ))}
+
+
+
+
+
+
+
+          <div className="category-item" onClick={() => handleCategoryCodeClick('👥 Empleados')}>
+            <div className='drag-handle-fixed'>📌</div>
+            <div className="titleAndDescription">
+              <h2>👥 Empleados</h2>
+              <p>Informacion de nuestros empleados.</p>
+            </div>
+            <ul className="ranks-list">
+              <li className="ranks-list-item">todos</li>
+            </ul>
+          </div>
+
+          {userRole === 'ceo' && (
+            <div className="category-item" onClick={() => handleCategoryCodeClick('📚 Gestionar usuarios')}>
+              <div className='drag-handle-fixed'>📌</div>
+              <div className="titleAndDescription">
+                <h2>📚 Gestionar usuarios</h2>
+                <p>Aquí podrá ver los servicios solicitados.</p>
+              </div>
+              <ul className="ranks-list">
+                <li className="ranks-list-item">ceo</li>
+              </ul>
+            </div>
+          )}
+
+
+
+
+
+
+
+
+
+
+
         </div>
 
         {showConfirm && (
@@ -331,4 +388,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default Category;
