@@ -1,20 +1,59 @@
+import jwt from 'jsonwebtoken';
+import config from '../config.js';
+import User from '../models/user-model.js'
+import Category from '../models/category-model.js'
 import Post from '../models/post-model.js';
 
 // controllers/post-controller.js
 
 export const createPost = async (req, res) => {
   try {
-    const { title, content, category, author } = req.body;
-    const newPost = new Post({
+    const { title, content, categoryId, token, publishedAt } = req.body;
+
+    if (!token) {
+      return res.status(403).json({ message: 'Token no proporcionado' });
+    }
+
+    let userId = "";
+
+    jwt.verify(token, config.app.secretKey, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: 'Token inválido', isAuthenticated: false });
+      } else {
+        userId = decoded.id;
+        console.log("ID del usuario:", userId);
+      }
+    });
+
+    const user = await User.findOne({ _id: userId }).select('-password');
+
+    if (!user) {
+      console.log("ERROR: No se encontró ningún usuario con el correo electrónico proporcionado");
+    }
+    
+    const author = `${user.name} ${user.surname}`;
+
+    const post = new Post({
       title,
       content,
-      author: author,
-      category
+      author,
+      category: categoryId,
+      publishedAt
     });
-    await newPost.save();
-    res.status(201).json(newPost);
+
+    await post.save();
+
+    // Actualizar la categoría con el ID del nuevo post
+    await Category.findByIdAndUpdate(
+      categoryId,
+      { $push: { postInCategory: post._id } },
+      { new: true }
+    );
+
+    res.status(201).json({ success: true, message: 'Post creado correctamente.' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Error al crear el post.' });
   }
 };
 
@@ -32,7 +71,8 @@ export const getPosts = async (req, res) => {
 export const getPostById = async (req, res) => {
   try {
     const { id } = req.params;
-    const post = await Post.findById(id).populate('author').populate('category');
+    const post = await Post.findOne({ _id: id });
+
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }

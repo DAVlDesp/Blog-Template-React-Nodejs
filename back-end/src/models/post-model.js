@@ -13,12 +13,12 @@ const postSchema = new Schema({
     required: true,
   },
   author: {
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: 'User',
     required: true
   },
   category: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
     required: true
   },
@@ -26,8 +26,6 @@ const postSchema = new Schema({
     type: Date,
     default: Date.now
   }
-}, {
-  timestamps: true
 });
 
 const Post = mongoose.model('Post', postSchema);

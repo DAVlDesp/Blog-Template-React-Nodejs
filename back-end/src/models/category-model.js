@@ -16,9 +16,15 @@ const categorySchema = new Schema({
   rolesAllowed: {
     type: [String], // Lista de roles que pueden acceder a esta categoría
     required: true,
+  },
+  roleAllowedToMakePosts: {
+    type: [String], // Lista de roles que pueden crear posts en esta categoría
+    required: true,
+  },
+  postInCategory: {
+    type: [String],
+    required: false,
   }
-}, {
-  timestamps: true
 });
 
 const Category = mongoose.model('Category', categorySchema);
