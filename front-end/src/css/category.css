@@ -43,7 +43,11 @@ select {
 }
 
 #Category-container {
-  width: 100%; /* El contenedor de categorías ocupa el 100% del ancho del contenedor */
+  width: 100%;
+  margin: 0 auto; /* Añade margen automático a los lados para centrar el contenido */
+  display: flex; /* Usa flexbox para alinear los elementos */
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan si no caben en una sola fila */
+  justify-content: center; /* Centra los elementos horizontalmente */
 }
 
 .category-item {
@@ -52,7 +56,8 @@ select {
   justify-content: space-between; /* Alinea los elementos en los extremos */
   align-items: center; /* Centra verticalmente los elementos */
   height: 50px;
-  max-width: 98.5%;
+  max-width: 90%;
+  width: 90%;
   border: 1px solid black;
   border-radius: 5px;
   margin: 5px auto; /* Aplica un margen superior e inferior de 10px y 0px a los lados */
