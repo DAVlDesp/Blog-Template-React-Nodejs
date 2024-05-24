@@ -35,12 +35,13 @@ const BlogStyle = ({ categoryId }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      const token = localStorage.getItem('token'); // Obteniendo el token del localStorage
       const response = await fetch('http://localhost:8080/post/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ title, content, categoryId, token: 'YOUR_TOKEN_HERE' }) // Reemplaza 'YOUR_TOKEN_HERE' con tu token real
+        body: JSON.stringify({ title, content, categoryId, token }) // Enviando el token obtenido del localStorage
       });
 
       if (!response.ok) {
@@ -70,7 +71,7 @@ const BlogStyle = ({ categoryId }) => {
         {posts.map(post => (
           <li key={post._id}>
             <h3>{post.title}</h3>
-            <p>Contend: {post.content}</p>
+            <p>Content: {post.content}</p>
             <p>Published by: {post.author}</p>
             <p>Published at: {post.publishedAt}</p>
           </li>

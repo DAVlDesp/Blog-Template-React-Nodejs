@@ -1,10 +1,8 @@
 import jwt from 'jsonwebtoken';
 import config from '../config.js';
-import User from '../models/user-model.js'
-import Category from '../models/category-model.js'
+import User from '../models/user-model.js';
+import Category from '../models/category-model.js';
 import Post from '../models/post-model.js';
-
-// controllers/post-controller.js
 
 export const createPost = async (req, res) => {
   try {
@@ -14,25 +12,21 @@ export const createPost = async (req, res) => {
       return res.status(403).json({ message: 'Token no proporcionado' });
     }
 
-    let userId = "";
+    // Decodificar el token para obtener el userId
+    const decodedToken = jwt.verify(token, config.app.secretKey);
+    const userId = decodedToken.id;
 
-    jwt.verify(token, config.app.secretKey, (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ message: 'Token inválido', isAuthenticated: false });
-      } else {
-        userId = decoded.id;
-        console.log("ID del usuario:", userId);
-      }
-    });
-
-    const user = await User.findOne({ _id: userId }).select('-password');
+    // Buscar el usuario por userId
+    const user = await User.findById(userId).select('-password');
 
     if (!user) {
-      console.log("ERROR: No se encontró ningún usuario con el correo electrónico proporcionado");
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-    
+
+    // Crear el autor utilizando el nombre y apellido del usuario
     const author = `${user.name} ${user.surname}`;
 
+    // Crear la nueva publicación
     const post = new Post({
       title,
       content,
@@ -41,6 +35,7 @@ export const createPost = async (req, res) => {
       publishedAt
     });
 
+    // Guardar la nueva publicación
     await post.save();
 
     // Actualizar la categoría con el ID del nuevo post
@@ -50,12 +45,15 @@ export const createPost = async (req, res) => {
       { new: true }
     );
 
-    res.status(201).json({ success: true, message: 'Post creado correctamente.' });
+    // Responder con éxito
+    return res.status(201).json({ success: true, message: 'Post creado correctamente.' });
   } catch (error) {
+    // Manejar errores
     console.error(error);
-    res.status(500).json({ message: 'Error al crear el post.' });
+    return res.status(500).json({ message: 'Error al crear el post.' });
   }
 };
+
 
 // Obtener todas las publicaciones
 export const getPosts = async (req, res) => {
