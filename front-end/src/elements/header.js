@@ -53,11 +53,6 @@ const Header = () => {
     navigate('/');
   };
 
-  const token = localStorage.getItem('token');
-  if (!token) {
-    navigate('/login'); // Redirigir al usuario a la página de login si no hay token
-    return;
-  }
 
   const handleMenuToggle = () => {
     setShowMenu(!showMenu); // Cambiar el estado para mostrar u ocultar el menú

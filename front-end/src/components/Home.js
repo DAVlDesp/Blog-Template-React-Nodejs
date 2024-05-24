@@ -1,14 +1,16 @@
 import React from 'react';
-
+import '../css/home.css';
 import Header from '../elements/header.js';
+import Disclaimer from '../elements/disclaimer.js';
 
-const Home = () => {
+function App() {
   return (
     <div>
       <Header />
       <h1>Home</h1>
-          </div>
+      <Disclaimer />
+    </div>
   );
-};
+}
 
-export default Home;
+export default App;
