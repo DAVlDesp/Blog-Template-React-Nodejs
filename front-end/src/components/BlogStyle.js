@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../elements/header.js'; // Importar el componente Header
 import '../css/blogStyle.css';
 
@@ -6,6 +7,11 @@ const BlogStyle = ({ categoryId }) => {
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [rolesAllowed, setSolesAllowed] = useState('');
+
+  const navigate = useNavigate(); // Función para la navegación
+
+  
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -15,6 +21,7 @@ const BlogStyle = ({ categoryId }) => {
           throw new Error('Failed to fetch data');
         }
         const categoryData = await response.json();
+        setSolesAllowed(categoryData.rolesAllowed);
         const postIds = categoryData.postInCategory || [];
 
         const fetchedPosts = await Promise.all(postIds.map(async postId => {
@@ -43,7 +50,7 @@ const BlogStyle = ({ categoryId }) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ title, content, categoryId, token }) // Enviando el token obtenido del localStorage
+        body: JSON.stringify({ title, content, categoryId, token, rolesAllowed }) // Envía rolesAllowed junto con el resto de los datos
       });
 
       if (!response.ok) {
@@ -81,6 +88,10 @@ const BlogStyle = ({ categoryId }) => {
     return formattedDate;
   };
 
+  const handlePostClick = (postId) => {
+    navigate(`/categorias/${categoryId}/post/${postId}`);
+  };
+
   return (
     <div>
       <Header />
@@ -88,7 +99,7 @@ const BlogStyle = ({ categoryId }) => {
         <h2>Posts in Category</h2>
         <ul id="Category-container-blog">
           {posts.map(post => (
-            <li className="blog-item" key={post._id}>
+            <li className="blog-item" key={post._id} onClick={() => handlePostClick(post._id)}>
               <div className="title-blog">
                 <h3>{post.title}</h3>
               </div>

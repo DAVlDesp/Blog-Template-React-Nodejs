@@ -6,7 +6,7 @@ import Post from '../models/post-model.js';
 
 export const createPost = async (req, res) => {
   try {
-    const { title, content, categoryId, token, publishedAt } = req.body;
+    const { title, content, categoryId, token, publishedAt, rolesAllowed } = req.body;
 
     if (!token) {
       return res.status(403).json({ message: 'Token no proporcionado' });
@@ -32,7 +32,8 @@ export const createPost = async (req, res) => {
       content,
       author,
       category: categoryId,
-      publishedAt
+      publishedAt,
+      rolesAllowed
     });
 
     // Guardar la nueva publicación

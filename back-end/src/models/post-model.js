@@ -25,6 +25,10 @@ const postSchema = new Schema({
   publishedAt: {
     type: Date,
     default: Date.now
+  },
+  rolesAllowed: {
+    type: [String], // Lista de roles que pueden acceder a esta categoría
+    required: true,
   }
 });
 
